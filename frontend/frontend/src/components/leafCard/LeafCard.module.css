@@ -1,0 +1,67 @@
+@import url(../../vars.css);
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  border-radius: 25px;
+  background: var(--color-primary3);
+  padding: 19px;
+  margin: 0 5px;
+  max-width: 1000px;
+  max-height: 300px;
+  gap: 25px;
+  font-family: var(--font-inter);
+  color: white;
+  border: 3px solid var(--color-dark);
+  margin-bottom: 28px;
+}
+
+.container p {
+  font-size: 24px;
+  font-weight: 600;
+  max-width: 800px;
+  text-align: center;
+}
+
+.leafImgContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.leafImgContainer label {
+  position: relative;
+  bottom: 0;
+  font-size: 32px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.leafImgContainer img {
+  width: 200px;
+  height: 200px;
+  border: 10px solid #d9d9d9;
+  border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 10px;
+    max-width: 100%;
+    max-height: none;
+  }
+
+  .container p {
+    font-size: 18px;
+    max-width: 100%;
+  }
+
+  .leafImgContainer img {
+    width: 150px;
+    height: 150px;
+  }
+}

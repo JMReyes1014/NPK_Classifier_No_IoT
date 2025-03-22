@@ -1,0 +1,13 @@
+:root {
+    /* Colors */
+    --color-text: #fff;
+    --color-primary: #79B791;
+    --color-primary2: #79b7916c;
+    --color-primary3: #ABD1B5;
+    --color-secondary: #6C8976;
+    --color-dark: #6C8976;
+    --color-dark2:rgba(108, 137, 118, 0.397)6;
+    --color-bg: #DFE6DA;
+
+    --font-inter: "inter";
+}

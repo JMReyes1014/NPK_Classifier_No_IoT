@@ -1,0 +1,71 @@
+.container {
+  color: var(--color-text);
+  background-color: var(--color-dark);
+  padding: 35px 0 15px 0;
+  margin-top: -180px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-inter);
+}
+
+.container .contact {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.container .contact h1 {
+  font-size: 64px;
+  font-weight: 400;
+}
+
+.container .contact ul,
+a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+}
+
+.container .contact li {
+  list-style: none;
+  font-size: 36px;
+}
+
+.container .contact a img {
+  list-style: none;
+  width: 60px;
+}
+
+.container .contact a img:hover {
+  filter: drop-shadow(0 0 20px var(--color-primary3)); /* Added hover effect */
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin-top: -40px;
+  }
+  .container .contact {
+    flex-direction: row; /* Change flex direction to column on smaller screens */
+    align-items: center;
+  }
+
+  .container .contact h1 {
+    font-size: 48px; /* Adjust font size for smaller screens */
+  }
+
+  .container .contact ul {
+    flex-direction: row; /* Change flex direction to column on smaller screens */
+    gap: 15px;
+  }
+
+  .container .contact li {
+    font-size: 24px; /* Adjust font size for smaller screens */
+  }
+
+  .container .contact a img {
+    width: 40px; /* Adjust icon size for smaller screens */
+  }
+}
