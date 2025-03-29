@@ -21,8 +21,10 @@ def predict_view(request):
             return Response({
                 "success" : True,
                 "prediction" : prediction_result,
-                "confidence" : round(confidence * 100, 2),
+                "confidence" : round(confidence * 100),  # Rounded confidence
             })
         except ValueError as e:
-            return Response({"success" : False, "error_message" : "Invalid request method"}, status=405)
-        
+            return Response({"success" : False, "error_message" : str(e)}, status=400)
+        except Exception as e:
+            return Response({"success" : False, "error_message" : "An unexpected error occurred."}, status=500)
+
