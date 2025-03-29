@@ -93,6 +93,14 @@ function landingPage({
 
     setLoading(true); // Start loading animation
 
+    // Reapply prediction-related styles
+    const predictionElement = document.getElementById("prediction");
+    if (predictionElement) {
+      predictionElement.className = `${styles.predictionResult} ${
+        prediction && confidence !== null ? styles.updatedPrediction : ""
+      }`;
+    }
+
     try {
       // Use the handleSubmit function passed as a prop
       await handleSubmit(e);
@@ -163,7 +171,11 @@ function landingPage({
             )}
           </label>
           {!loading && predictionResult !== "⬅️ Click to Predict" ? (
-            <button type="button" onClick={handleReset} className={styles.custom_button}>
+            <button
+              type="button"
+              onClick={handleReset}
+              className={styles.custom_button}
+            >
               Reset
             </button>
           ) : (

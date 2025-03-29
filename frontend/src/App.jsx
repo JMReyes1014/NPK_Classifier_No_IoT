@@ -17,34 +17,40 @@ function App() {
     setImage(event.target.files[0]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = new FormData();
     formData.append("fileImage", image); // Corrected key name to "fileImage"
 
-    axios
-      .post("http://127.0.0.1:8000/predict/", formData, {
-        headers: {
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-      })
-      .then((response) => {
-        const data = response.data;
-        if (data.success) {
-          setPrediction(data.prediction);
-          setconfidence(data.confidence);
-        } else {
-          alert(data.error_message || "Prediction Failed. Please try again.");
+    try {
+      // Simulate delay
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a 1-second delay
+
+      const response = await axios.post(
+        "http://127.0.0.1:8000/predict/",
+        formData,
+        {
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-        alert(
-          error.response?.data?.error_message ||
-            "An error occurred. Please try again."
-        );
-      });
+      );
+
+      const data = response.data;
+      if (data.success) {
+        setPrediction(data.prediction);
+        setconfidence(data.confidence);
+      } else {
+        alert(data.error_message || "Prediction Failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+      alert(
+        error.response?.data?.error_message ||
+          "An error occurred. Please try again."
+      );
+    }
   };
 
   const getCookie = (name) => {
