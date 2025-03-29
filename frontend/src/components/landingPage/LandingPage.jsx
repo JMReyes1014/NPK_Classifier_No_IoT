@@ -1,11 +1,32 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./landingPage.module.css";
 
-function landingPage({ handleSubmit, handleImageChange, image, prediction, confidence }) {
+function landingPage({
+  handleSubmit,
+  handleImageChange,
+  image,
+  prediction,
+  confidence,
+}) {
   const [dragging, setDragging] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [predictionResult, setPredictionResult] = useState("⬅️ Click to Predict");
-  const fileInputRef = useRef(null); // Use useRef to reference the file input
+  const [predictionResult, setPredictionResult] = useState(
+    "⬅️ Click to Predict"
+  );
+  const [loading, setLoading] = useState(false); // New state for loading animation
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    // Update predictionResult when prediction or confidence changes
+    if (prediction && confidence !== null) {
+      setPredictionResult(
+        prediction && confidence !== null
+          ? `Prediction: ${prediction}, Confidence: ${Math.floor(confidence)}%`
+          : "Prediction failed. Please try again."
+      );
+      setLoading(false); // Stop loading when prediction is updated
+    }
+  }, [prediction, confidence]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -44,83 +65,61 @@ function landingPage({ handleSubmit, handleImageChange, image, prediction, confi
   const handleButtonClick = (e) => {
     e.stopPropagation(); // Prevent event propagation
     e.preventDefault(); // Prevent default behavior
-  
+
     if (fileInputRef.current) {
       fileInputRef.current.click(); // Trigger the file input click
     }
   };
 
+  const handleReset = () => {
+    setSelectedImage(null);
+    setPredictionResult("⬅️ Click to Predict");
+    handleImageChange({ target: { files: [] } }); // Reset the image in parent state
+
+    // Apply the .reset styling to the <p> inside <strong>
+    const predictionElement = document.getElementById("prediction");
+    if (predictionElement) {
+      predictionElement.className = styles.reset; // Apply the .reset class
+    }
+  };
+
   const handlePrediction = async (e) => {
-  e.preventDefault(); // Prevent form submission
+    e.preventDefault(); // Prevent form submission
 
-  if (!selectedImage) {
-    setPredictionResult("Please upload an image first.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("image", selectedImage);
-  console.log([...formData]); // Debug FormData
-
-  try {
-    const response = await fetch("http://localhost:5000/predict", {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log("Response status:", response.status); // Debug response status
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch prediction.");
+    if (!selectedImage) {
+      setPredictionResult("Please upload an image first.");
+      return;
     }
 
-    const data = await response.json();
-    console.log("Response data:", data); // Debug response data
-    const { prediction, confidence } = data;
+    setLoading(true); // Start loading animation
 
-    setPredictionResult(`Prediction: ${prediction}, Confidence: ${confidence}%`);
-  } catch (error) {
-    console.error("Error during prediction:", error);
-    setPredictionResult("Error: Unable to get prediction.");
-  }
-};
+    try {
+      // Use the handleSubmit function passed as a prop
+      await handleSubmit(e);
 
-// Update the image preview
-{selectedImage ? (
-  <div className={styles.imagePreview}>
-    <img
-      src={URL.createObjectURL(selectedImage)} // Use selectedImage
-      alt="Preview"
-      title="Drag new image here to replace"
-    />
-  </div>
-) : (
-  <>
-    <span className={styles.drop_title}>Drop file here</span>
-    or
-    <div className={styles.button_wrap}>
-      <input
-        type="file"
-        id="images"
-        accept="image/*"
-        required
-        onChange={handleImageSelection}
-        ref={fileInputRef} // Attach the ref to the input
-        style={{ display: "none" }} // Hide the input element
-      />
-      <div
-        className={styles.custom_button}
-        onClick={handleButtonClick} // Use the ref-based handler
-      >
-        Choose File
-      </div>
-    </div>
-  </>
-)}
+      // Update the prediction result based on props
+      setPredictionResult(
+        prediction && confidence !== null
+          ? `Prediction: ${prediction}, Confidence: ${Math.round(confidence)}%`
+          : "Prediction failed. Please try again."
+      );
+    } catch (error) {
+      setPredictionResult(
+        error.response?.data?.error_message ||
+          "An error occurred. Please try again."
+      );
+    } finally {
+      setLoading(false); // Stop loading after prediction
+    }
+  };
+
   return (
     <section>
       <div className={styles.container}>
-        <form onSubmit={handleSubmit} className={styles.input}>
+        <form
+          onSubmit={selectedImage && !loading ? handlePrediction : undefined}
+          className={styles.input}
+        >
           <label
             htmlFor="images"
             className={`${styles.drop_container} ${
@@ -163,7 +162,15 @@ function landingPage({ handleSubmit, handleImageChange, image, prediction, confi
               </>
             )}
           </label>
-          <button type="submit">Predict</button>
+          {!loading && predictionResult !== "⬅️ Click to Predict" ? (
+            <button type="button" onClick={handleReset} className={styles.custom_button}>
+              Reset
+            </button>
+          ) : (
+            <button type="submit" disabled={loading}>
+              {loading ? "Predicting..." : "Predict"}
+            </button>
+          )}
         </form>
 
         <div className={styles.about}>
@@ -180,7 +187,16 @@ function landingPage({ handleSubmit, handleImageChange, image, prediction, confi
           </p>
 
           <strong>
-            <p id="prediction"> {predictionResult} </p>
+            <p
+              id="prediction"
+              className={`${styles.predictionResult} ${
+                prediction && confidence !== null
+                  ? styles.updatedPrediction
+                  : ""
+              }`}
+            >
+              {loading ? "Processing..." : predictionResult}
+            </p>
           </strong>
         </div>
       </div>

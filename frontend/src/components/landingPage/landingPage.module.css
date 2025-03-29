@@ -87,6 +87,14 @@
 .about strong p {
   font-size: 64px;
   margin-bottom: 0;
+  color: #000;
+}
+
+.reset {
+  font-size: 64px;
+  margin-bottom: 0;
+  color: #000;
+  text-align: center; /* Ensure text is centered */
 }
 
 .container button {
@@ -108,6 +116,34 @@
   background-color: var(--color-dark);
 }
 
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button[type="button"] {
+  background-color: var(--color-primary); /* Use a distinct color for reset */
+  border: 5px solid var(--color-dark);
+  color: white;
+  padding: 10px 30px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  width: 340px;
+  height: 80px;
+  font-size: 40px;
+  margin-top: 20px;
+}
+
+button[type="button"]:hover {
+  background-color: var(--color-dark);
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+button[type="button"]:active {
+  transform: scale(0.95); /* Slightly shrink on click */
+}
+
 .imagePreview {
   margin-top: 10px;
   text-align: center;
@@ -119,7 +155,12 @@
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
+}
+.updatedPrediction {
+  font-weight: bold;
+  color: #007bff !important; /* Highlight color for updated prediction */
+  transition: color 0.3s ease-in-out, font-weight 0.3s ease-in-out;
+  font-size: 42px !important;
 }
 
 /* Responsive adjustments */

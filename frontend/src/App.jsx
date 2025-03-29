@@ -1,49 +1,50 @@
 import "@fontsource/inter";
-import styles from './App.module.css';
-import Header from './components/header/Header';
-import LandingPage from './components/landingPage/LandingPage';
-import Basis from './components/basisPage/Basis';
+import styles from "./App.module.css";
+import Header from "./components/header/Header";
+import LandingPage from "./components/landingPage/LandingPage";
+import Basis from "./components/basisPage/Basis";
 import Footer from "./components/footer/Footer";
 
 import React, { useState } from "react";
-import axios from 'axios';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
 
 function App() {
-
-  const[image, setImage] = useState(null);
-  const[prediction, setPrediction] = useState(null);
-  const[confidence, setconfidence] = useState(null);
+  const [image, setImage] = useState(null);
+  const [prediction, setPrediction] = useState(null);
+  const [confidence, setconfidence] = useState(null);
 
   const handleImageChange = (event) => {
     setImage(event.target.files[0]);
-  }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("FileImage", image);
+    formData.append("fileImage", image); // Corrected key name to "fileImage"
 
     axios
-    .post("http://127.0.0.1:8000/predict/", formData, {
-      headers: {
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-    })
-    .then((response) => {
-      const data = response.data;
-      if(data.success) {
-        setPrediction(data.prediction);
-        setconfidence(data.confidence);
-      } else {
-        alert("Prediction Failed. Please try again.")
-      }
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-      alert("An error occured. Please try again.")
-    });
+      .post("http://127.0.0.1:8000/predict/", formData, {
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+      })
+      .then((response) => {
+        const data = response.data;
+        if (data.success) {
+          setPrediction(data.prediction);
+          setconfidence(data.confidence);
+        } else {
+          alert(data.error_message || "Prediction Failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+        alert(
+          error.response?.data?.error_message ||
+            "An error occurred. Please try again."
+        );
+      });
   };
 
   const getCookie = (name) => {
@@ -64,11 +65,17 @@ function App() {
   return (
     <section className={styles.app}>
       <Header />
-      <LandingPage handleImageChange={handleImageChange} handleSubmit={handleSubmit} image={image} prediction={prediction} confidence={confidence}/>
+      <LandingPage
+        handleImageChange={handleImageChange}
+        handleSubmit={handleSubmit}
+        image={image}
+        prediction={prediction}
+        confidence={confidence}
+      />
       <Basis />
       <Footer />
     </section>
-  )
+  );
 }
 
-export default App
+export default App;
