@@ -1,1 +1,3 @@
 .venv
+backend/model/ResNetModelV1.h5
+backend/model/resnetModelV1/variables/variables.data-00000-of-00001
